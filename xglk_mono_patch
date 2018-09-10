@@ -1,0 +1,232 @@
+diff -c xglk/xg_gestalt.c xglk+hack/xg_gestalt.c
+*** xglk/xg_gestalt.c   Sun Feb 14 18:47:36 1999
+--- xglk+hack/xg_gestalt.c      Fri Feb 19 19:55:20 1999
+***************
+*** 77,84 ****
+
+    case gestalt_DrawImage: {
+  #ifndef NO_PNG_AVAILABLE
+-     if (xiodepth < 8)
+-       return FALSE;
+      if (val == wintype_Graphics || val == wintype_TextBuffer)
+        return TRUE;
+  #endif /* NO_PNG_AVAILABLE */
+--- 77,82 ----
+diff -c xglk/xglk_pict.c xglk+hack/xglk_pict.c
+*** xglk/xglk_pict.c    Fri Feb 19 00:28:28 1999
+--- xglk+hack/xglk_pict.c       Fri Feb 19 23:00:14 1999
+***************
+*** 33,42 ****
+
+  #else /* NO_PNG_AVAILABLE */
+
+-   if (xiodepth < 8) {
+-     return NULL;
+-   }
+-
+    if (!table) {
+      table = (picture_t **)malloc(HASHSIZE * sizeof(picture_t *));
+      if (!table)
+--- 33,38 ----
+***************
+*** 621,629 ****
+          }
+        }
+        }
+!       else {
+!       /* All other bit depths, just use a constant pattern. */
+!       memset(destdata, 0x55, height*destrowbytes);
+        }
+      }
+    }
+--- 617,684 ----
+          }
+        }
+        }
+!       else {
+!       /*
+!        * If all else fails, monochrome should still work right? This code
+!        * should not make any assumptions about how images are represented
+!        * in memory.
+!        */
+!         double *acc_error, error, next_error;
+!         int ix_stop, dx, tmp;
+!
+!         acc_error = (double *) calloc(width + 2, sizeof (double));
+!         if (acc_error != NULL) {
+!         dx      = 1;
+!         ix      = 0;
+!         ix_stop = width - 1;
+!         srcptr  = srcrowptr;
+!
+!         for (jx = 0; jx < width + 2; jx++)
+!           acc_error[jx] = 0.0;
+!
+!         for (jx = 0; jx < height; jx++) {
+!           next_error = acc_error[1];
+!           for (; ix != ix_stop + dx; ix += dx) {
+!             if (channels < 3)
+!               error = ((float) srcptr[0]) / 255.0 + next_error;
+!             else
+!               error = (((float) srcptr[0]) * 0.2125  /* red   */
+!                      + ((float) srcptr[1]) * 0.7154  /* green */
+!                      + ((float) srcptr[2]) * 0.0721) /* blue  */
+!                      / 255.0 + next_error;
+!
+!             if (error > 0.5) {
+!               XPutPixel(gimp, ix, jx, WhitePixel(xiodpy, xioscn));
+!               error -= 1.0;
+!             }
+!             else
+!               XPutPixel(gimp, ix, jx, BlackPixel(xiodpy, xioscn));
+!
+! #if 0
+!             /* This is the version I first saw described... */
+!             next_error = acc_error[1 + ix + dx] +  (3.0 * error) / 8.0;
+!             acc_error[1 + ix]                   += (3.0 * error) / 8.0;
+!             acc_error[1 + ix + dx]              =  (2.0 * error) / 8.0;
+! #else
+!             /* ...but this version seems to be quite a bit better. */
+!             next_error = acc_error[1 + ix + dx] +  (7.0 * error) / 16.0;
+!             acc_error[1 + ix - dx]              += (3.0 * error) / 16.0;
+!             acc_error[1 + ix]                   += (5.0 * error) / 16.0;
+!             acc_error[1 + ix + dx]              =  (1.0 * error) / 16.0;
+! #endif
+!
+!             srcptr += (channels * dx);
+!           }
+!
+!           ix      -= dx;
+!           ix_stop -= (dx * (width - 1));
+!           dx       = -dx;
+!
+!           srcptr += srcrowbytes;
+!           }
+!
+!         free (acc_error);
+!         }
+        }
+      }
+    }
+***************
+*** 639,644 ****
+--- 694,701 ----
+
+  #endif /* NO_PNG_AVAILABLE */
+
++ #include <assert.h>
++
+  static XImage *scale_image(XImage *src, int destwidth, int destheight)
+  {
+    XImage *dest = NULL;
+***************
+*** 657,662 ****
+--- 714,720 ----
+    destrowbytes = (destwidth * depth + 7) / 8;
+    if (destrowbytes & 31)
+      destrowbytes = (destrowbytes | 31) + 1;
++   /*  destdata = (unsigned char *)malloc(destrowbytes * destheight); */
+    destdata = (unsigned char *)malloc(destrowbytes * destheight);
+
+    dest = XCreateImage(xiodpy, DefaultVisual(xiodpy, xioscn),
+***************
+*** 665,676 ****
+    if (!dest)
+      return NULL;
+
+!   rowmap = (int *)calloc((destrowbytes+1), sizeof(int));
+    destiptr = 0;
+    srciptr = 0;
+    xcounter = 0;
+
+!   if (depth == 8) {
+      for (ix=0; ix<destwidth; ix++) {
+        rowmap[destiptr] = srciptr;
+        xcounter += srcwidth;
+--- 723,737 ----
+    if (!dest)
+      return NULL;
+
+!   if (depth == 1)
+!     rowmap = (int *)calloc((destwidth+1), sizeof(int));
+!   else
+!     rowmap = (int *)calloc((destrowbytes+1), sizeof(int));
+    destiptr = 0;
+    srciptr = 0;
+    xcounter = 0;
+
+!   if (depth == 1 || depth == 8) {
+      for (ix=0; ix<destwidth; ix++) {
+        rowmap[destiptr] = srciptr;
+        xcounter += srcwidth;
+***************
+*** 708,730 ****
+      }
+    }
+
+!   destrow = destdata;
+!   srcrow = src->data;
+!   ycounter = 0;
+
+!   for (jx=0; jx<destheight; jx++) {
+
+!     int val = destwidth * depth / 8;
+!     for (ix=0; ix<val; ix++) {
+!       destrow[ix] = srcrow[rowmap[ix]];
+      }
+
+!     ycounter += srcheight;
+!     while (ycounter >= destheight) {
+!       ycounter -= destheight;
+!       srcrow += srcrowbytes;
+      }
+-     destrow += destrowbytes;
+    }
+
+    free(rowmap);
+--- 769,812 ----
+      }
+    }
+
+!   if (depth == 1) {
+!     /* I think there is a good chance that this code works for any depth, but
+!        my opportunities for testing it are limited. */
+!     int src_y = 0;
+
+!     ycounter = 0;
+
+!     for (jx = 0; jx < destheight; jx++) {
+!       for (ix = 0; ix < destwidth; ix++) {
+!       XPutPixel(dest, ix, jx, XGetPixel(src, rowmap[ix], src_y));
+!       }
+!
+!       ycounter += srcheight;
+!       while (ycounter >= destheight) {
+!       ycounter -= destheight;
+!       src_y++;
+!       }
+      }
++   } else
++   {
++     destrow = destdata;
++     srcrow = src->data;
++     ycounter = 0;
+
+!     for (jx=0; jx<destheight; jx++) {
+!
+!       int val = destwidth * depth / 8;
+!       for (ix=0; ix<val; ix++) {
+!         destrow[ix] = srcrow[rowmap[ix]];
+!       }
+!
+!       ycounter += srcheight;
+!       while (ycounter >= destheight) {
+!         ycounter -= destheight;
+!         srcrow += srcrowbytes;
+!       }
+!       destrow += destrowbytes;
+      }
+    }
+
+    free(rowmap);
+

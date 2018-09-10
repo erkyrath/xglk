@@ -1,0 +1,53 @@
+Test on a monochrome display; see if everything works. Particularly when
+someone hits the ctrl-L (redraw everything) command.
+
+X selections don't work. There's some code in there, but not so much with
+the functional. 
+
+Implement macros.
+
+Configuration support for Unix?
+
+Drag-scrolling.
+
+Option to turn scrollbars off, or move to left.
+
+Pasting can move the insertion mark below the bottom of the window.
+
+Pasting too much causes it to take "a few tries to get to the bottom"?
+
+In Makefile, no INCLUDEDIR breaks. ("-I" with no suffix.)
+
+Make sure message line clears after get-fileref-by-prompt. 
+
+In an indexed color environment (such as 8 bit-per-pixel), XGlk can
+run out of colors. Then things start appearing as black, or otherwise
+screwy.
+
+Transparency in images doesn't work at all. Neither does gamma. 
+
+Scaled images on dithered displays are dithered and then scaled, which
+is a stupid order.
+
+Closing text doesn't page, because there's no focus. Give focus.
+(Same bug in MacGlk.)
+
+When more text is outputted than fits the screen, it pauses, but
+doesn't let you scroll up while paused until you scroll all the way
+down first.  
+
+Also, pressing space during line input in the latest xglk moves the
+point over pictures and into the scrollbar area.
+
+When there is more than one line of input with _s in it, the _s on
+upperlines are overwritten by lower lines.
+
+"I tried using the Kill button provided by my window manager to stop
+the program (nitfol), and nothing happened.  I'm using WindowMaker, if
+that helps."
+
+Command switch for how to allocate colors -- and make the default
+different if no images are compiled in.
+
+Flushing (select_poll()) doesn't work? Do we need to flush the X
+queue as well? 

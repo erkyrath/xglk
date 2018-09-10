@@ -1,0 +1,346 @@
+The XGlk library takes its display preferences from X resources and
+command-line options. Resources give you somewhat more flexibility and
+control; command-line options override resources (if they conflict.)
+
+You specify resources by putting lines in your .Xresources file, for
+example:
+
+Glk.geometry: 600x700
+dungeon.geometry: 500x500
+Glk.Window.background: green
+
+A resource line is a list of specifiers, followed by a colon and a value.
+Each specifier is either a class (if it begins with an upper-case letter) or
+an instance (if it begins with a lower-case letter.) A class specifier sets
+the resource for every instance of that class. For example, "Glk" is a
+top-level class which includes every XGlk application; so the first line
+above sets the window geometry for all XGlk apps to 600 by 700 pixels.  The
+second line sets the geometry for a single application, the XGlk version of
+dungeon. (Naturally, specific resources override class resources.)
+
+The third line, for another example, sets the background color for all
+windows to be green (in all XGlk applications.)
+
+(Note: The current version of the XGlk library does not support individual
+application names. This will be fixed in the next release. In the meantime,
+write all your resources starting with the class "Glk", upper-case.)
+
+See the X documentation for a full description of the X resources system.
+
+-----
+
+For each preference, we list the class resource line, instance resource
+line, command-line option (if there is one), and the default value. In the
+instance, the following abbreviations are used:
+
+{app}: The name of the application, as used to start it up. The class name
+"Glk" applies to all applications. (Note that individual app names are not
+implemented in this version.)
+
+{window}: Either "textBuffer" or "textGrid", to specify a type of
+window. The class name "Window" applies to all windows.
+
+{style}: One of the standard Glk style names: "normal", "emphasized",
+"preformatted", "header", "subheader", "alert", "note", "blockQuote",
+"input", "user1", "user2". The class name "Style" applies to all styles.
+
+{x,y}: An axis, "x" or "y". This is used for setting margins. The class name
+"Width" applies to both axes.
+
+Remember that you can mix class and instance specifiers in a resource line.
+
+Glk.Window.alert.foreground: red
+Glk.textBuffer.Style.foreground: green
+
+These lines set the color of the "alert" style in all windows to red, and
+the color of all text in text-buffer windows to green. (The "alert" style in
+text-buffer windows will be green, because of obscure X preference rules. If
+you want to change this, you could add "Glk.textBuffer.alert.foreground".)
+
+-----
+
+class:    Glk.Geometry
+instance: {app}.geometry
+option:   -geometry
+default:  500x600+64+10
+
+This determines the window size and location, in the usual X geometry
+syntax. 
+
+class:    Glk.Foreground
+instance: {app}.foreground
+option:   -foreground
+default:  black
+
+The overall foreground color, including default text color. This may be
+overridden for specific windows; see below.
+
+class:    Glk.Background
+instance: {app}.background
+option:   -background
+default:  white
+
+The overall background color. This may be overridden for specific windows;
+see below.
+
+class:    Glk.LinkColor
+instance: {app}.linkColor
+option:   -linkcolor
+default:  blue
+
+The overall hyperlink color. This may be overridden for specific windows;
+see below.
+
+class:    Glk.SelectColor
+instance: {app}.selectColor
+option:   -selectcolor
+default:  blue
+
+The color for the border around the currently-selected window.
+
+class:    Glk.FrameColor
+instance: {app}.frameColor
+option:   -framecolor
+default:  grey50
+
+The color for the frame and the borders between windows; also miscellaneous
+background regions, such as the backgrounds of scrollbars.
+
+class:    Glk.FrameUpColor
+instance: {app}.frameUpColor
+option:   -frameupcolor
+default:  grey75
+
+The top shadow edge of window frames and borders. This is used only for a
+clever 3D effect; set frameUpColor the same as frameColor if you don't like
+it.
+
+class:    Glk.FrameDownColor
+instance: {app}.frameDownColor
+option:   -framedowncolor
+default:  grey25
+
+The bottom shadow edge of window frames and borders.
+
+class:    Glk.DitherImages
+instance: {app}.ditherImages
+option:   -ditherimages
+default:  true
+
+Whether to dither images, if images are displayed on an 8-bit display.
+Setting this false makes image display faster, at the expense of quality.
+It has no effect on 16-bit or 32-bit displays.
+
+class:    Glk.ColorLinks
+instance: {app}.colorLinks
+option:   -colorlinks
+default:  true
+
+Whether to show hyperlinks in a different color (the appropriate
+linkColor).
+
+class:    Glk.UnderlineLinks
+instance: {app}.underlineLinks
+option:   -underlinelinks
+default:  true
+
+Whether to underline hyperlinks.
+
+class:    Glk.PromptDefaults
+instance: {app}.promptDefaults
+option:   -defprompt
+default:  true
+
+Whether to provide default values when prompting for filenames.
+
+class:    Glk.TextBuffer.SaveLength
+instance: glk.textBuffer.saveLength
+option:   -savelength
+default:  8000
+
+The length of the scrollback buffer for text-buffer windows. (Text-grid
+windows do not scroll back.) This is measured in characters.
+
+class:    Glk.TextBuffer.SaveSlack
+instance: glk.textBuffer.saveSlack
+option:   -saveslack
+default:  1000
+
+How much the scrollback can exceed the save-length before it is trimmed
+back. This should not be too small, since trimming takes a bit of extra
+time.
+
+class:    Glk.HistoryLength
+instance: glk.historyLength
+option:   -historylength
+default:  20
+
+The number of commands that are saved in the command history of each window.
+
+class:    Glk.Window.Foreground
+instance: {app}.{window}.foreground
+option:   -bufforeground, -gridforeground
+default:  same as Glk.Foreground
+
+The foreground color for a specific window type. As described above, you can
+set the second specifier to "textGrid" or "textBuffer", or "Window" to set
+the foreground color of both window types.
+
+class:    Glk.Window.Background
+instance: {app}.{window}.background
+option:   -bufbackground, -gridbackground
+default:  same as Glk.Background
+
+The background color for a specific window type.
+
+class:    Glk.Window.LinkColor
+instance: {app}.{window}.linkcolor
+option:   -buflinkcolor, -gridlinkcolor
+default:  same as Glk.LinkColor
+
+The link color for a specific window type.
+
+class:    Glk.Window.Margin.Width
+instance: {app}.{window}.margin.{x,y}
+option:   -marginx, -bufmarginx, -gridmarginx (and the same for y)
+default:  4 for x, 2 for y
+
+Extra space around the content of a window, measured in pixels. The fourth
+specifier can be "x", "y", or "Width" to set both to the same value.
+
+class:    Glk.Window.Style.Spec
+instance: {app}.{window}.{style}.spec
+default:  see below
+
+The font spec string for the given style, or set of styles. As described
+above, the third specifier can be "Style" to set all styles, or one of the
+standard Glk style names.
+
+The format of a font spec string is described below. The summary is, it
+specifies a whole set of X fonts, including what happens when the size or
+style changes. But if you want to specify a single font, you can also just
+use the X font name directly. You can also change fonts by using the style
+resources below, which select a different font from the standard font spec.
+
+Remember that text-grid windows must always have fixed-width fonts. All
+fonts should display the full Latin-1 character set (ISO 8859-1); the XGlk
+library assumes that the full range of characters can be displayed in every
+font.
+
+class:    Glk.Window.Style.Size
+instance: {app}.{window}.{style}.size
+default:  0
+
+The *relative* font size of the style. Zero is the default (middle) size of
+the fonts given in the font spec string. Set this to a positive number to
+increase the size, or a negative number to decrease it.
+
+class:    Glk.Window.Style.Weight
+instance: {app}.{window}.{style}.weight
+default:  0
+
+The style's weight. 0 is normal, 1 is boldface, -1 is lightweight.
+(Lightweight is not available in the default font spec.)
+
+class:    Glk.Window.Style.Oblique
+instance: {app}.{window}.{style}.oblique
+default:  0
+
+The style's angle. 0 is normal; 1 is oblique (italic).
+
+class:    Glk.Window.Style.Proportional
+instance: {app}.{window}.{style}.proportional
+default:  0
+
+The style's fixed-width attribute. 0 is fixed-width; 1 is proportional.
+
+class:    Glk.Window.Style.Indent
+instance: {app}.{window}.{style}.indent
+default:  0
+
+The left indentation of the text in the given style. This is measured in
+pixels.
+
+class:    Glk.Window.Style.ParIndent
+instance: {app}.{window}.{style}.parIndent
+default:  0
+
+The paragraph indentation of the text in the given style. This applies to
+the first line of each paragraph (that is, the first line after every
+line-break.) This is in addition to the Indent value, which applies to every
+line. Like Indent, it is measured in pixels. This may be negative, for
+reverse indentation of paragraphs.
+
+class:    Glk.Window.Style.Justify
+instance: {app}.{window}.{style}.justify
+default:  1
+
+The justification of the given style. 0 is left-flush, 1 is full justified
+(left and right), 2 is centered, and 3 is right-flush.
+
+class:    Glk.Window.Style.Foreground
+instance: {app}.{window}.{style}.foreground
+default:  same as Glk.Window.Foreground
+
+The text color of the given style.
+
+class:    Glk.Window.Style.Background
+instance: {app}.{window}.{style}.background
+default:  same as Glk.Window.Background
+
+The background color of the given style.
+
+class:    Glk.Window.Style.LinkColor
+instance: {app}.{window}.{style}.linkColor
+default:  same as Glk.Window.LinkColor
+
+The link color of the given style.
+
+-----
+
+Font spec strings:
+
+To give Glk programs and players more control over font styles, fonts are
+given in a rather baroque format. For example, the default font spec for
+text-grid windows is:
+
+-adobe-courier-%w{medium,bold}-%o{r,o}-normal--%s{8,10,12,14,18,24}-*-*-*-*-*-iso8859-1
+
+This looks like a standard X font name, but it has some interpolations. Each
+one is a list of *possible* strings which can be used, depending on various
+text-style options.
+
+For example, the segment "%s{8,10,12,14,18,24}" will be interpreted as "12"
+if the relative font size is zero; "14" if the size is 1, "10" if -1, and so
+on. The zero value is always in the middle of the list. (Rounded to the
+left, so "12" is the middle, not "14".) Values -2 or less map to "8"; values
+3 or more map to "24".
+
+Similarly, "%w{medium,bold}" will be interpreted as "medium" if the weight
+attribute is 0 or less, "bold" if the attribute is 1 or more. You could
+change this to "%w{light,medium,bold}" to allow a weight of -1, 0, or
+1. (Except that there is no "light" font in the adobe-courier family.)
+
+There are currently four interpolation segments:
+
+   %s: font size
+   %w: weight (normal or bold)
+   %o: obliquity (normal or italic/oblique)
+   %p: proportionality (fixed-width or proportional)
+
+Interpolations can be nested; see below.
+
+All characters except "%" are left alone. Therefore, an X font name is
+always a valid font spec string; it will simply not be affected by style
+preferences such as size. If you want to set the font of a single style,
+it makes sense to put in an X font name without interpolations.
+
+We leave you with the default font spec for text buffer windows:
+
+%p{-adobe-courier-%w{medium,bold}-%o{r,o}-normal--%s{8,10,12,14,18,24}-*-*-*-*-*-iso8859-1,-adobe-times-%w{medium,bold}-%o{r,i}-normal--%s{8,10,12,14,18,24,34}-*-*-*-*-*-iso8859-1}
+
+This monstrosity has a %p switch on the outside, which chooses between a
+fixed-width spec (the same adobe-courier spec used for text-grid windows),
+and a proportional spec (based on adobe-times.) Note that %w, %o, and %s
+segments are nested inside the %p options.
+
