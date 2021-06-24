@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "xglk.h"
 #include "xg_internal.h"
+#include <string.h> 
 
 static stylehints_t null_hints;
 static stylehints_t textbuf_hints;

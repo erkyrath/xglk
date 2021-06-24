@@ -74,9 +74,9 @@ JPEGINCLUDE =
 JPEGLIB = -ljpeg
 
 # If there is no PNG lib available, uncomment this line.
-# PNGFLAG = -DNO_PNG_AVAILABLE
+PNGFLAG = -DNO_PNG_AVAILABLE
 # If there is no JPEG lib available, uncomment this line.
-# JPEGFLAG = -DNO_JPEG_AVAILABLE
+JPEGFLAG = -DNO_JPEG_AVAILABLE
 
 # --------------------
 

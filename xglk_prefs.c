@@ -69,7 +69,7 @@ int xglk_init_preferences(int argc, char *argv[],
     int inarglist = FALSE;
     char *cx;
         
-    for (argform = glkunix_arguments; 
+    for (argform = argform; 
 	 argform->argtype != glkunix_arg_End && !errflag; 
 	 argform++) {
             
@@ -148,14 +148,17 @@ int xglk_init_preferences(int argc, char *argv[],
 
   if (errflag) {
     printf("usage: %s [ options ... ]\n", argv[0]);
-    if (glkunix_arguments[0].argtype != glkunix_arg_End) {
+    /*if (glkunix_arguments[0].argtype != glkunix_arg_End) { */
+    if (1) {
       glkunix_argumentlist_t *argform;
       printf("game options:\n");
+      /*
       for (argform = glkunix_arguments;
 	   argform->argtype != glkunix_arg_End;
 	   argform++) {
-	printf("  %s\n", argform->desc);
+        printf("  %s\n", argform->desc);
       }
+      */
     }
     return FALSE;
   }
