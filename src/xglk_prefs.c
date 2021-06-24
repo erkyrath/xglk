@@ -401,12 +401,12 @@ int xglk_init_preferences(int argc, char *argv[],
       }
       else {
 	if (wprefs == &(prefs.textbuffer))
-	  cx = "%p{-adobe-courier-%w{medium,bold}-%o{r,o}-normal-"
+	  cx = "%p{-*-*-%w{medium,bold}-%o{r,o}-normal-"
 	    "-%s{8,10,12,14,18,24}-*-*-*-*-*-iso8859-1,"
-	    "-adobe-times-%w{medium,bold}-%o{r,i}-normal-"
+	    "-*-*-%w{medium,bold}-%o{r,i}-normal-"
 	    "-%s{8,10,12,14,18,24,34}-*-*-*-*-*-iso8859-1}";
 	else
-	  cx = "-adobe-courier-%w{medium,bold}-%o{r,o}-normal-"
+	  cx = "-*-*-%w{medium,bold}-%o{r,o}-normal-"
 	    "-%s{8,10,12,14,18,24}-*-*-*-*-*-iso8859-1";
       }
       fprefs->specname = cx;

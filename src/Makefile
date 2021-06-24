@@ -84,7 +84,7 @@ JPEGFLAG = -DNO_JPEG_AVAILABLE
 #CC = cc
 CC = gcc
 
-CFLAGS = -O -ansi $(PNGFLAG) $(JPEGFLAG) $(PNGINCLUDE) $(JPEGINCLUDE) -Wall -Wmissing-prototypes -Wstrict-prototypes -Wno-unused -Wbad-function-cast $(SYSTEMFLAGS) $(XINCLUDE)
+CFLAGS = -g -O -ansi $(PNGFLAG) $(JPEGFLAG) $(PNGINCLUDE) $(JPEGINCLUDE) -Wall -Wmissing-prototypes -Wstrict-prototypes -Wno-unused -Wbad-function-cast $(SYSTEMFLAGS) $(XINCLUDE)
 LDFLAGS =
 LIBS = $(XLIB) $(PNGLIB) $(JPEGLIB) $(SYSTEMLIBS)
 
@@ -96,15 +96,15 @@ OBJS = main.o xglk.o xglk_vars.o xglk_prefs.o xglk_loop.o xglk_init.o \
   xg_schan.o \
   gi_dispa.o gi_blorb.o
 
-all: libxglk.a Make.xglk
+all: libxglk.a Make.xglk clean.o
 
 libxglk.a: $(OBJS)
-	ar r libxglk.a $(OBJS)
-	ranlib libxglk.a
+	ar r ../libxglk.a $(OBJS)
+	ranlib ../libxglk.a
 
 Make.xglk:
-	echo LINKLIBS = $(LIBDIRS) $(LIBS) > Make.xglk
-	echo GLKLIB = -lxglk >> Make.xglk
+	-echo LINKLIBS = $(LIBDIRS) $(LIBS) > ../Make.xglk
+	-echo GLKLIB = -lxglk >> ../Make.xglk
 
 $(OBJS): xglk.h xg_internal.h xglk_option.h glk.h gi_dispa.h gi_blorb.h
 
@@ -112,5 +112,7 @@ xg_win_textgrid.o xg_window.o xglk_key.o: xg_win_textgrid.h
 
 xg_win_textbuf.o xg_window.o xglk_key.o: xg_win_textbuf.h
 
+clean.o:
+	-rm -f *.o
 clean:
 	-rm -f *~ *.o libxglk.a Make.xglk
