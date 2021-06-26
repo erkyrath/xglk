@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "xglk.h"
 #include "xg_internal.h"
+#include <string.h> 
 
 static stylehints_t null_hints;
 static stylehints_t textbuf_hints;
@@ -80,6 +81,8 @@ void gli_styles_compute(fontset_t *font, stylehints_t *hints)
 { 
   int ix;
   int negindent;
+  int falied_fonts = 0;
+  int loaded_fonts = 0;
   glsi32 val;
   winprefs_t *wprefs;
 
@@ -100,8 +103,10 @@ void gli_styles_compute(fontset_t *font, stylehints_t *hints)
   font->linkcolor = wprefs->linkcolor;
   font->backcolor = wprefs->backcolor;
 
+
   for (ix=0; ix<style_NUMSTYLES; ix++) {
     fontref_t *fref = &(font->gc[ix]);
+    loaded_fonts++;
     XGCValues gcvalues;
     int size, weight, oblique, proportional;
     char buf[256];
@@ -133,6 +138,8 @@ void gli_styles_compute(fontset_t *font, stylehints_t *hints)
       size, weight, oblique, proportional);
     fref->fontstr = XLoadQueryFont(xiodpy, buf);
     if (!fref->fontstr) {
+      falied_fonts++;
+      loaded_fonts--;
       fprintf(stderr, "### unable to snarf font %s.\n", buf);
     }
 
@@ -164,6 +171,11 @@ void gli_styles_compute(fontset_t *font, stylehints_t *hints)
       font->gc[ix].parindent = wprefs->style[ix].parindent;
   }
 
+  if (falied_fonts > 0) {
+    fprintf(stderr, "### unable to load %i fonts.\n", falied_fonts);
+    fprintf(stderr, "### loaded %i fonts in total.\n", loaded_fonts);
+  }
+
   font->lineheight = 0;
   font->lineoff = 0;
   font->baseindent = 0;
@@ -171,31 +183,33 @@ void gli_styles_compute(fontset_t *font, stylehints_t *hints)
   
   for (ix=0; ix<style_NUMSTYLES; ix++) {
     fontref_t *fref = &(font->gc[ix]);
-    int ascent, descent, dir;
-    int clineheight, clineheightoff, ival;
-    XCharStruct strdat;
+    if (fref->fontstr) {
+      int ascent, descent, dir;
+      int clineheight, clineheightoff, ival;
+      XCharStruct strdat;
 
-    XTextExtents(fref->fontstr, " ", 1, &dir, &ascent, &descent, &strdat);
-    font->gc[ix].ascent = ascent;
-    font->gc[ix].descent = descent;
-    if (descent < 2)
-      font->gc[ix].underliney = descent-1;
-    else
-      font->gc[ix].underliney = 1;
-    
-    clineheight = ascent + descent + wprefs->leading;
-    clineheightoff = ascent;
-    if (clineheight > font->lineheight)
-      font->lineheight = clineheight;
-    if (clineheightoff > font->lineoff)
-      font->lineoff = clineheightoff;
-    font->gc[ix].spacewidth = strdat.width;
+      XTextExtents(fref->fontstr, " ", 1, &dir, &ascent, &descent, &strdat);
+      font->gc[ix].ascent = ascent;
+      font->gc[ix].descent = descent;
+      if (descent < 2)
+        font->gc[ix].underliney = descent-1;
+      else
+        font->gc[ix].underliney = 1;
+      
+      clineheight = ascent + descent + wprefs->leading;
+      clineheightoff = ascent;
+      if (clineheight > font->lineheight)
+        font->lineheight = clineheight;
+      if (clineheightoff > font->lineoff)
+        font->lineoff = clineheightoff;
+      font->gc[ix].spacewidth = strdat.width;
 
-    ival = font->gc[ix].indent + font->gc[ix].parindent;
-    if (ival < negindent)
-      negindent = ival;
-    if (font->gc[ix].indent < negindent)
-      negindent = font->gc[ix].indent;
+      ival = font->gc[ix].indent + font->gc[ix].parindent;
+      if (ival < negindent)
+        negindent = ival;
+      if (font->gc[ix].indent < negindent)
+        negindent = font->gc[ix].indent;
+    }
   }
 
   font->baseindent = -negindent;

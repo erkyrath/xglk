@@ -25,8 +25,6 @@ static void adjustdot(int visible);
 
 int init_xmsg()
 {
-  struct timezone tz;
-
   message_size = 80;
   message = (char *)malloc(message_size * sizeof(char));
   if (!message)
@@ -36,7 +34,7 @@ int init_xmsg()
     LIBRARYNAME, LIBRARYVERSION);
   messagelen = strlen(message);
   messagesticky = FALSE;
-  gettimeofday(&messagetime, &tz);
+  gettimeofday(&messagetime, NULL);
   messagetime.tv_sec += TIMEOUT;
 
   return TRUE;
@@ -104,8 +102,6 @@ static void adjustdot(int visible)
 
 void xmsg_set_message(char *str, int sticky)
 {
-  struct timezone tz;
-   
   if (!message)
     return;
   if (!str)
@@ -121,19 +117,18 @@ void xmsg_set_message(char *str, int sticky)
   xmsg_redraw();
 
   messagesticky = sticky;
-  gettimeofday(&messagetime, &tz);
+  gettimeofday(&messagetime, NULL);
   messagetime.tv_sec += TIMEOUT;
 }
 
 void xmsg_check_timeout()
 {
-  struct timezone tz;
   struct timeval tv;
 
   if (messagesticky)
     return;
 
-  gettimeofday(&tv, &tz);
+  gettimeofday(&tv, NULL);
   if (tv.tv_sec > messagetime.tv_sec
     || (tv.tv_sec == messagetime.tv_sec && tv.tv_usec > messagetime.tv_usec)) {
     xmsg_set_message(NULL, TRUE);

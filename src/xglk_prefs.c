@@ -69,7 +69,7 @@ int xglk_init_preferences(int argc, char *argv[],
     int inarglist = FALSE;
     char *cx;
         
-    for (argform = glkunix_arguments; 
+    for (argform = argform; 
 	 argform->argtype != glkunix_arg_End && !errflag; 
 	 argform++) {
             
@@ -148,14 +148,17 @@ int xglk_init_preferences(int argc, char *argv[],
 
   if (errflag) {
     printf("usage: %s [ options ... ]\n", argv[0]);
-    if (glkunix_arguments[0].argtype != glkunix_arg_End) {
+    /*if (glkunix_arguments[0].argtype != glkunix_arg_End) { */
+    if (1) {
       glkunix_argumentlist_t *argform;
       printf("game options:\n");
+      /*
       for (argform = glkunix_arguments;
 	   argform->argtype != glkunix_arg_End;
 	   argform++) {
-	printf("  %s\n", argform->desc);
+        printf("  %s\n", argform->desc);
       }
+      */
     }
     return FALSE;
   }
@@ -398,12 +401,12 @@ int xglk_init_preferences(int argc, char *argv[],
       }
       else {
 	if (wprefs == &(prefs.textbuffer))
-	  cx = "%p{-adobe-courier-%w{medium,bold}-%o{r,o}-normal-"
+	  cx = "%p{-*-*-%w{medium,bold}-%o{r,o}-normal-"
 	    "-%s{8,10,12,14,18,24}-*-*-*-*-*-iso8859-1,"
-	    "-adobe-times-%w{medium,bold}-%o{r,i}-normal-"
+	    "-*-*-%w{medium,bold}-%o{r,i}-normal-"
 	    "-%s{8,10,12,14,18,24,34}-*-*-*-*-*-iso8859-1}";
 	else
-	  cx = "-adobe-courier-%w{medium,bold}-%o{r,o}-normal-"
+	  cx = "-*-*-%w{medium,bold}-%o{r,o}-normal-"
 	    "-%s{8,10,12,14,18,24}-*-*-*-*-*-iso8859-1";
       }
       fprefs->specname = cx;

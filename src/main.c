@@ -18,9 +18,11 @@ int main(int argc, char *argv[])
   }
 
   inittime = TRUE;
+  /*
   if (!glkunix_startup_code(&startdata)) {
     glk_exit();
   }
+  */
   inittime = FALSE;
 
   glk_main();

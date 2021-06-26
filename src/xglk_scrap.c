@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <X11/Xatom.h>
 #include "xg_internal.h"
+#include <string.h>
 
 static char *scrap = NULL;
 static int scraplen = 0;

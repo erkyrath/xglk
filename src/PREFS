@@ -337,7 +337,7 @@ it makes sense to put in an X font name without interpolations.
 
 We leave you with the default font spec for text buffer windows:
 
-%p{-adobe-courier-%w{medium,bold}-%o{r,o}-normal--%s{8,10,12,14,18,24}-*-*-*-*-*-iso8859-1,-adobe-times-%w{medium,bold}-%o{r,i}-normal--%s{8,10,12,14,18,24,34}-*-*-*-*-*-iso8859-1}
+%p{-*-*-%w{medium,bold}-%o{r,o}-normal--%s{8,10,12,14,18,24}-*-*-*-*-*-iso8859-1,-*-*-%w{medium,bold}-%o{r,i}-normal--%s{8,10,12,14,18,24,34}-*-*-*-*-*-iso8859-1}
 
 This monstrosity has a %p switch on the outside, which chooses between a
 fixed-width spec (the same adobe-courier spec used for text-grid windows),

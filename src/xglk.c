@@ -19,9 +19,11 @@ int xglk_init(int argc, char *argv[], glkunix_startup_t *startdata)
 
   /* Test for compile-time errors. If one of these spouts off, you
      must edit glk.h and recompile. */
+  size_t glui32_size = sizeof(glui32);
   if (sizeof(glui32) != 4) {
-    printf("Compile-time error: glui32 is not a 32-bit value. Please fix glk.h.\n");
-    return 1;
+      printf("Compile-time error: glui32 is not a 32-bit value. Please fix glk.h.\n");
+      printf("glui32 is a %li in size", glui32_size);
+      return 1;
   }
   if ((glui32)(-1) < (glui32)(0)) {
     printf("Compile-time error: glui32 is not unsigned. Please fix glk.h.\n");

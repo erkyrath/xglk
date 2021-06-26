@@ -17,14 +17,13 @@ static struct timeval lasttime = {0, 0};
 void xglk_event_poll(event_t *ev, glui32 millisec)
 {
   struct timeval tv, curtime, outtime;
-  struct timezone tz;
   /* just check for a timer event, nothing else. */
   
   eventloop_event = ev;
 
   if (millisec) {
     if (lasttime.tv_sec == 0)
-      gettimeofday(&lasttime, &tz);
+      gettimeofday(&lasttime, NULL);
     outtime.tv_sec = lasttime.tv_sec + (millisec/1000);
     outtime.tv_usec = lasttime.tv_usec + ((millisec%1000)*1000);
     if (outtime.tv_usec >= 1000000) {
@@ -34,7 +33,7 @@ void xglk_event_poll(event_t *ev, glui32 millisec)
   }
 
   if (millisec) {
-    gettimeofday(&curtime, &tz);
+    gettimeofday(&curtime, NULL);
     if (curtime.tv_sec > outtime.tv_sec 
       || (curtime.tv_sec == outtime.tv_sec 
 	&& curtime.tv_usec > outtime.tv_usec)) {
@@ -61,14 +60,13 @@ void xglk_event_loop(event_t *ev, glui32 millisec)
   int eventp;
   int firsttime = TRUE;
   struct timeval tv, curtime, outtime;
-  struct timezone tz;
 
   eventloop_event = ev;
   xglk_perform_click(mouse_Reset, NULL, 0, 0);
 
   if (millisec) {
     if (lasttime.tv_sec == 0)
-      gettimeofday(&lasttime, &tz);
+      gettimeofday(&lasttime, NULL);
     outtime.tv_sec = lasttime.tv_sec + (millisec/1000);
     outtime.tv_usec = lasttime.tv_usec + ((millisec%1000)*1000);
     if (outtime.tv_usec >= 1000000) {
@@ -84,7 +82,7 @@ void xglk_event_loop(event_t *ev, glui32 millisec)
     }
 
     if (millisec && !firsttime) {
-      gettimeofday(&curtime, &tz);
+      gettimeofday(&curtime, NULL);
       if (curtime.tv_sec > outtime.tv_sec 
 	|| (curtime.tv_sec == outtime.tv_sec 
 	  && curtime.tv_usec > outtime.tv_usec)) {

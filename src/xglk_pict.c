@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/param.h>
+#include <string.h>
 
 #ifndef NO_PNG_AVAILABLE
 #include <png.h>
