@@ -219,5 +219,52 @@ URL shown above.
 ## Version history:
 
 0.4.11:
-    Forked from [here.](https://github.com/erkyrath/xglk)
+    Upgraded to Glk API version 0.6.1; i.e., a couple of new gestalt
+    selectors.
+    Fixed dispatch bug for glk_get_char_stream.
 
+0.4.10:
+    Fixed a couple of display bugs (one that could cause freezes)
+
+0.4.9:
+    Added hyperlink code, and other changes for Glk 0.6.0.
+    Improved mouse-clicking code for textgrids.
+
+0.4.8:
+    Changed the default save game name to "game.sav".
+    Added "-defprompt" switch, to suppress default file names.
+    Added glkunix_set_base_file().
+    Added support for function keys.
+
+0.4.7:
+    Fixed a small bug in image code, sometimes prevented JPEGs from loading.
+
+0.4.6:
+    Fixed various problems with Blorb support.
+
+0.4.5:
+    Added JPEG image support.
+
+0.4.4:
+    Updated for Glk API 0.5.2; that is, added sound channel stubs.
+    Made the license a bit friendlier.
+
+0.4.3, 0.4.2:
+    Image display slowly nears acceptable functionality.
+
+0.4.1:
+    Fixed display of images on 8-bit displays. Also added a -ditherimage
+switch and resource (default is "true")
+    Fixed text flowing around margin images.
+
+0.4:
+    Updated for Glk API 0.5.1.
+
+0.3:
+    Updated for Glk API 0.5.
+
+0.2:
+    The one true Unix Glk Makefile system.
+    Startup code and command-line argument system.
+
+0.1 alpha: initial release.
