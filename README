@@ -194,15 +194,12 @@ Thanks to Torbjorn Andersson for monochrome display patches.
 
 * Permissions
 
-The source code in this package is copyright 1998-9 by Andrew Plotkin. You
-may copy and distribute it freely, by any means and under any conditions,
-as long as the code and documentation is not changed. You may also
-incorporate this code into your own program and distribute that, or modify
-this code and use and distribute the modified version, as long as you retain
-a notice in your program or documentation which mentions my name and the
-URL shown above.
+The source code in this package is copyright 1998-2000 by Andrew Plotkin.
+It is distributed under the MIT license; see the "LICENSE" file.
 
 * Version history:
+
+(June 2021: Updated to MIT license.)
 
 0.4.11:
     Upgraded to Glk API version 0.6.1; i.e., a couple of new gestalt
